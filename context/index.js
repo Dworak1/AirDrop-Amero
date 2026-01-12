@@ -91,7 +91,9 @@ export const CONTEXT_Provider = ({ children }) => {
         const account = await checkIfWalletConnected();
         //GET USER BALANCE
         const balance = await getBalance();
-        setBalance(ethers.utils.formatEther(balance.toString()));
+        if (balance) {
+          setBalance(ethers.utils.formatEther(balance.toString()));
+        }
         setAddress(account);
 
         //TBCDistributor_CONTRACT
@@ -173,12 +175,21 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
   useEffect(() => {
     fetchInitialData();
   }, [address, count]);
+
+  useEffect(() => {
+    const init = async () => {
+      const account = await checkIfWalletConnected();
+      if (account) setAddress(account);
+    };
+    init();
+  }, []);
 
   const claimAirdrop = async (user) => {
     try {
@@ -285,6 +296,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -318,6 +330,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -349,6 +362,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -379,6 +393,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -408,6 +423,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -442,6 +458,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 
@@ -477,6 +494,7 @@ export const CONTEXT_Provider = ({ children }) => {
       const errorMsg = parseErrorMsg(error);
       notifyError(errorMsg);
       console.log(error);
+      setLoader(false);
     }
   };
 

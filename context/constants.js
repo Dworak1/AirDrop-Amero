@@ -22,10 +22,10 @@ const networks = {
     chainName: "Sepolia Test Network",
     nativeCurrency: {
       name: "SepoliaETH",
-      symbol: "SepoliaETH",
+      symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: ["https://sepolia.infura.io/v3/"],
+    rpcUrls: ["https://eth-sepolia.g.alchemy.com/v2/demo"],
     blockExplorerUrls: ["https://sepolia.etherscan.io"],
   },
 };
@@ -39,15 +39,27 @@ const changeNetwork = async ({ networkName }) => {
   try {
     if (!window.ethereum) throw new Error("No crypto wallet found");
     await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [
-        {
-          ...networks[networkName],
-        },
-      ],
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: networks[networkName].chainId }],
     });
-  } catch (err) {
-    console.log(err.message);
+  } catch (switchError) {
+    // This error code 4902 indicates that the chain has not been added to MetaMask.
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              ...networks[networkName],
+            },
+          ],
+        });
+      } catch (addError) {
+        console.log("Error adding network:", addError.message);
+      }
+    } else {
+      console.log("Error switching network:", switchError.message);
+    }
   }
 };
 

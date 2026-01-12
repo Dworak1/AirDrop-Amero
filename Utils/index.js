@@ -7,7 +7,7 @@ export const parseErrorMsg = (e) => {
   return json?.reason || json?.error?.message;
 };
 
-export const isValidTwitterUrl = (url) => {
+export const isValidXUrl = (url) => {
   const regex = /^https?:\/\/(www\.)?(twitter|x)\.com\/\w+\/status\/\d+/;
   return regex.test(url);
 };
@@ -17,7 +17,7 @@ export const isValidLinkedInUrl = (url) => {
   return url.includes("linkedin.com");
 };
 
-export const getTwitterIdFromUrl = (url) => {
+export const getXIdFromUrl = (url) => {
   try {
     if (!url.includes("status/")) return url; // Assume it's an ID if no status/ part
     const parts = url.split("status/");

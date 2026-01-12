@@ -12,7 +12,7 @@ import { TwitterMomentShare } from "react-social-media-embed";
 //INTERNAL IMPORT
 import { Linkedin, Twitter, Instagram, Follow } from "./index";
 import { CONTEXT } from "../context/index";
-import { getTwitterIdFromUrl, isValidLinkedInUrl } from "../Utils/index";
+import { getXIdFromUrl, isValidLinkedInUrl } from "../Utils/index";
 
 const Verify = () => {
   const handleImage = () => {
@@ -36,7 +36,7 @@ const Verify = () => {
   const handleFormFieldChange = (fieldName, e) => {
     let value = e.target.value;
     if (fieldName === "twitterId") {
-      const id = getTwitterIdFromUrl(value);
+      const id = getXIdFromUrl(value);
       if (id) value = id;
     }
     setUser({ ...user, [fieldName]: value });
@@ -52,20 +52,56 @@ const Verify = () => {
     }
 
     // Verification
-    // if (!isValidLinkedInUrl(linkedInUrl)) {
-    //   return notifyError("Invalid LinkedIn URL");
-    // }
+    if (!/^\d+$/.test(twitterId)) {
+      return notifyError("Invalid X Link (Must be a Post URL)");
+    }
+
+    // LinkedIn: Check for specific post markers like /posts/, /feed/update/, or /activity/
+    const linkedInPattern = /linkedin\.com\/(feed\/update\/|posts\/|activity\/)/;
+    if (!linkedInPattern.test(linkedInUrl)) {
+      return notifyError("Invalid LinkedIn Post Link (Must be a specific post)");
+    }
+
+    // Instagram: Check for /p/ (post) or /reel/ 
+    const instagramPattern = /instagram\.com\/(p|reel)\//;
+    if (!instagramPattern.test(instagramUrl)) {
+      return notifyError("Invalid Instagram Post Link (Must be a specific post)");
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      return notifyError("Invalid Email Address");
+    }
 
     setVerifying(true);
     notifySuccess("Verifying Post Details...");
 
-    // Simulate Verification Delay
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+      // Reconstruct URL for verification API (since we only stored the ID)
+      const verificationUrl = `https://twitter.com/i/status/${twitterId}`;
 
-    setVerifying(false);
-    notifySuccess("Posts Verified Successfully!");
+      const response = await fetch('/api/verify-tweet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: verificationUrl }),
+      });
 
-    await claimAirdrop(user);
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error);
+      }
+
+      setVerifying(false);
+      notifySuccess("Posts Verified Successfully!");
+
+      await claimAirdrop(user);
+    } catch (error) {
+      setVerifying(false);
+      console.error(error);
+      notifyError(error.message || "Verification Failed");
+    }
   };
 
   console.log(claimStatus);
@@ -83,7 +119,7 @@ const Verify = () => {
                   </i>
                 </div>
                 <div class="content">
-                  <h6 class="title">Twitter </h6>
+                  <h6 class="title">X </h6>
                   <Twitter
                     user={user}
                     handleClick={(e) => handleFormFieldChange("twitterId", e)}
@@ -181,7 +217,7 @@ const Verify = () => {
                       <HiOutlineClipboardDocument
                         className="new-cursour"
                         onClick={(e) =>
-                          navigator.clipboard.writeText("Twitter @TheBCoders")
+                          navigator.clipboard.writeText("X @TheBCoders")
                         }
                       />
                       <div
@@ -193,7 +229,7 @@ const Verify = () => {
                         <input
                           type="text"
                           disabled
-                          placeholder="Twitter @TheBCoders"
+                          placeholder="X @TheBCoders"
                         />
                       </div>
                     </div>
@@ -254,14 +290,14 @@ const Verify = () => {
                       className="new-cursour"
                       onClick={(e) =>
                         navigator.clipboard.writeText(
-                          "🚀 Join the revolution! Introducing @theblockchaincoders, the future of decentralized finance and social impact. 💡 With every transaction, you're not just investing in a token, you're investing in positive change. 🌍 Let's empower communities, support sustainability, and drive meaningful impact together. Don't miss out on this opportunity to be part of something bigger than yourself. Invest in [Token Name] today and make a difference while earning rewards! #@theblockchaincoders #crypto #daulathussain #dapp 🌟🔗"
+                          "🚀 Join the revolution! Introducing @AmeroX! The future of decentralized finance. 💡 Invest in positive change. 🌍 #amerox #crypto #blockchain #airdrop 🌟🔗"
                         )
                       }
                     />
                     <textarea
                       name="message"
                       disabled
-                      placeholder="🚀 Join the revolution! Introducing @theblockchaincoders, the future of decentralized finance and social impact. 💡 With every transaction, you're not just investing in a token, you're investing in positive change. 🌍 Let's empower communities, support sustainability, and drive meaningful impact together. Don't miss out on this opportunity to be part of something bigger than yourself. Invest in [Token Name] today and make a difference while earning rewards! #@theblockchaincoders #crypto #daulathussain #dapp 🌟🔗"
+                      placeholder="🚀 Join the revolution! Introducing @AmeroX! The future of decentralized finance. 💡 Invest in positive change. 🌍 #amerox #crypto #blockchain #airdrop 🌟🔗"
                     ></textarea>
                   </div>
                   <button onClick={() => handleImage()} class="btn">

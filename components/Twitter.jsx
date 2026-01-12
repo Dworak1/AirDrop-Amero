@@ -15,13 +15,21 @@ import {
 const Twitter = ({ handleClick, user }) => {
   return (
     <>
-      {user.twitterId ? (
-        <TwitterTweetEmbed tweetId={user?.twitterId} />
-      ) : (
-        <div class="input-group-new">
-          <label class="label-new">Post Link</label>
-          <input onChange={handleClick} class="input-new" type="text" />
-          <div></div>
+      <div class="input-group-new">
+        <label class="label-new">Post URL</label>
+        <input
+          onChange={handleClick}
+          class="input-new"
+          type="text"
+          value={user.twitterId || ''}
+          placeholder="Paste Tweet URL"
+        />
+        <div></div>
+      </div>
+
+      {user.twitterId && (
+        <div style={{ marginTop: '1rem' }}>
+          <TwitterTweetEmbed tweetId={user?.twitterId} />
         </div>
       )}
 
