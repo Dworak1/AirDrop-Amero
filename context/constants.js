@@ -6,11 +6,11 @@ import axios from "axios";
 import airdrop from "./airdrop.json";
 import AmeroToken from "./AmeroToken.json";
 
-export const airdrop_ADDRESS = "0x8be55D5868726172048CC0DA0e1f189cb2de592B";
+export const airdrop_ADDRESS = "0x00C90f104558eD14491d9BAbcB7C0eA767E65DCD";
 const airdrop_ABI = airdrop.abi;
 
 //AMEROTOKEN
-export const AMEROTOKEN_ADDRESS = "0xeE04ad9EA2ca3Aa6bD7036D33ca21F90dBFd07fF";
+export const AMEROTOKEN_ADDRESS = "0x62B9330aAeDB14A0853a61eE4875437ca0b10301";
 const AmeroToken_ABI = AmeroToken.abi;
 
 const fetchContract = (signer, ABI, ADDRESS) =>
@@ -28,10 +28,32 @@ const networks = {
     rpcUrls: ["https://eth-sepolia.g.alchemy.com/v2/demo"],
     blockExplorerUrls: ["https://sepolia.etherscan.io"],
   },
+  bscTestnet: {
+    chainId: `0x${Number(97).toString(16)}`,
+    chainName: "Binance Smart Chain Testnet",
+    nativeCurrency: {
+      name: "Binance Chain Native Token",
+      symbol: "tBNB",
+      decimals: 18,
+    },
+    rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+    blockExplorerUrls: ["https://testnet.bscscan.com"],
+  },
+  bsc: {
+    chainId: `0x${Number(56).toString(16)}`,
+    chainName: "Binance Smart Chain Mainnet",
+    nativeCurrency: {
+      name: "Binance Coin",
+      symbol: "BNB",
+      decimals: 18,
+    },
+    rpcUrls: ["https://bsc-dataseed.binance.org/"],
+    blockExplorerUrls: ["https://bscscan.com"],
+  },
 };
 
 export const handleNetworkSwitch = async () => {
-  const networkName = "sepolia";
+  const networkName = "bscTestnet"; // Change to "bsc" for mainnet
   await changeNetwork({ networkName });
 };
 
